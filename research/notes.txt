@@ -1,0 +1,116 @@
+**Catching Bad Guys with Graph Mining**
+	-Fraudster-accomplice pattern in e-Commerce (think e-Bay)
+		-Fraudsters rarely trade with each other.
+		-Accomplices rarely trade with each other.
+		-Modelled as bipartite core graph where fraudsters and accomplices interact frequency, but rarely interact with each other or with victims.
+		-Accomplices trade frequently with a fraudster to boost the fraudster's reputation.
+		-This patterns sets up the infrastructure criminals must conduct before the fraud occurs. 
+		-This pattern can be detected using a technique called Belief Propagation.
+		-In general, the idea of propagating information across a graph and aggregating it to produce high-level conclusions is a powerful. The Belief Propagation algorithm is just one example of this idea.
+	  -Graphite 
+		-Graphite is a tool where a user draws a pattern that represents a typical fraud scheme. Graphite queries the DB to find near patterns matches. 
+		-A "clique" is defined as a group of entities where every entity has communicated with every other entity in the clique.
+	  -Oddball	
+		-A node's neighborhood is a subgraph referred to as an "egonet". For instance, our entity-of-interest is the center of an egonet we display to the user.
+		-Oddball extracts ego nets and uses clustering to find nodes whose egonets do not match a typical pattern. 
+
+		
+**Implementing-social-network-analysis-for-fraud-prevention**
+	-Cites a definition of social network analysis (SNA): 
+		-SNA is a “data mining technique that reveals the structure and content of a body of information by representing it as a set of interconnected, linked objects or entities.” [Mena, 2003].
+	-Common graph metrics
+		-Density. The amount of linkage between nodes in the graph. Defined as number of edges divided number of possible edges. Useful for finding credit card transactions and money laundering transactions. High density means more investigation is warranted.
+		-Centrality. Measures how close a node is to the center of activity in a network. Nodes with high centrality are more structurally more important than other nodes. 
+			-Degree. One type of centrality. Degree is the direct count of the umber of connections a node has to other nodes. Higher degree means the node is more influential relative to other nodes.
+			-Closeness. Another type of centrality. Stronger measurement than degree. Based on number of hops between a node and all other nodes. Think of it as how much access a node has to the rest of the graph. See Wasserman and Faust, 1997.
+			-Betweenness. Betweenness measure how often the node is on the shortest path between other nodes. Helps you find the enablers.
+		-Other measures are mentioned but not discussed: sub-structures, structural holes, and clustering-coefficient.
+			
+**On Graph-Based Name Disambiguation**
+	-Three flavors of the entity resolution/entity matching problem
+		-Two identical names that refer to different entities. (Will Smith the actor, Will Smith the athlete).
+		-Two similar names that refer to the same entity. (Will F. Smith and William Smith).
+		-Two similar names that refer to different entities. (Will Smith the actor and Bill Smith the athlete).
+	-Academic paper whose goal is to disambiguate different authors of academic paper who have the same name.
+		-Relies on co-authorship to calculate similarity between entities with the same name.
+		-If the same name shows up frequently with the same co-authors, it is likely that name refers to the same entity.
+	-The technique might be adaptable to AML.
+		-Instead of a collection of papers, we could use a collection of accounts.
+		-The co-signers/joint account holders of the accounts are analogous to co-authors of the same paper. 
+		-For example if someone named Bob and someone named Alice are signatories on several accounts, then it is more likely that that the "Bob" on those accounts is the same "Bob", even if one is "Robert Frehley" and another is "Bob A. Frehley".
+	-You could also use this trick with a collection of transactions. 
+		-For example, all the "Bobs" transacting with Alice and Jim are more likely to be the same "Bob", especially if Alice and Jim have a lot of transaction in common.
+
+		
+**Quality-aware similarity assessment for entity matching in Web data**
+	-A general statement of the problem is, given a collection of documents, cluster the documents such that all references to name X all refer to the same entity in the same cluster.
+	-Similarity functions capture the degree of belief about whether two entities refer to the same real-world entity.
+	-A common (almost universal) assumption is that there is a one-to-one correspondence between a document and the name of an entity in a document. That is, we assume no document refers to both Will Smith the actor and Will Smith the athlete in the same document. The "Will Smith" in the document can be one or the other, but not both.
+	-Tools used to extract features from Web pages about entities:
+		-alchemyAPI - extract named entities
+		-GATE  - extract other types of entities, such as organizations and locations
+		-openCalais - extract other types of entities, such as organizations and locations
+		-semhacker - Extract Wikipedia-based concepts 
+		-Lucene - represent a Web page as a document vector
+	-Basic similarity functions
+		-Weighted concept vector  -  Cosine similarity
+		-URL of the page  -  String similarity
+		-Most frequent name on the page  -  String similarity
+		-Concepts vector   -  Number of overlapping concepts
+		-Organizations entities on the page  -  Number of overlapping organizations
+		-Other person-names on the page  -  Number of overlapping persons
+		-The name closest to the search keyword  -  String similarity
+		-TF-IDF(based weights) words vector  -  Cosine similarity
+		-TF-IDF(based weights) words vector  -  Pearsons correlation similarity
+		-TF-IDF(based weights) words vector  -  Extended Jaccard similarity
+	-Entity graph. A graph where directly connected nodes refer to the same entity.
+	-Paper details their method of combining the different similarity score to product the best approximation of the true entity graph.
+	-Their results show a an F-measure of about 0.7 and an accuracy of about 0.6. Meh.
+	-Their complex way of combining measures improves their metrics by 0.01 to 0.1.
+	-Seminal in the area of similarity measures seems to be D.V.Kalashnikov, S.Mehrotra, Domain-independent data cleaning via analysis of entity-relationship graph,ACM Transactions on Database Systems31(2)(2006).
+
+**It’s Who You Know: Graph Mining Using Recursive Structural Features**
+	-Given graphs from the same domain...
+		-How can we use information in one to do classification in the other
+		-If one of the graphs is anonymized, how can we use information in one to de-anonymize the other?
+	-ReFeX (Recursive Feature eXtraction)
+		-Recursively combines local (node-based) features with neighborhood (egonet-based) features
+		-Outputs regional features
+		-Captures "behavioral" information. 
+		-Regional features represent the kind of nodes to which a given node is connected (e.g., connected to rich people), as opposed to the identity of those nodes (e.g., connected to Bill Gates)
+	-Classification of features
+		-Local features
+			-Measure(s) of the node's degree.
+			-Degrees means number of edges coming into the node/number of edges going out of the node.
+			-Local features can be weighted by edges' weights.
+		-Egonet features 
+			-Egonet includes the node, its neighbors, and any edges in the induced subgraph on these nodes.
+			-Egonet features also include number of edges entering and leaving the egonet.
+		-Neighborhood features
+			-Combination of local and egonet features.
+	-Recursive features
+		-Means
+			-The mean value of the features' unweighted degree among all neighbors of a node. (??)
+		-Sums
+		-Pruning strategy to avoid exponential complexity
+			-Eliminate one of the features whenever two features are correlated above a user-defined threshold.
+			-Vertical logarithmic binning (WTF?)
+	-ReFeX algorithm
+		-Generate and bin a set of features 
+		-Identify pairs of features that do not disagree at any vertex by more than a threshold s. 
+			-Such a pair of features are called s-friends. 
+		-Construct a graph whose nodes are features and whose links are s-friend relations.
+			-This is called the feature graph.
+		-Replace each connected component of this graph by a single feature (???)
+			-When possible,  retain “simpler” features, i.e. features generated using fewer recursive iterations.
+		-If a recursive iteration results in no retained features, ReFeX halts and reports the retained feature values from each of the previous iterations. 
+			-A feature retained in iteration k may not be retained in iteration k + 1, due to recursive features connecting them in the feature-graph. 
+			-In this case, we still record and output the feature because it was retained at some iteration.
+	-ReFeX parameters
+		-p. The fraction of nodes placed in each bin. Range of p is [0,1]. p=0.5 is a good choice.
+		-s. Feature similarity threshold. Start at zero and increase by 1 each iteration.
+		
+**Entity disambiguation with textual and connection information**
+	-Similar to Belief Propagation (or maybe the same?)		
+		
+		
