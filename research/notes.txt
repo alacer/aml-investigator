@@ -110,7 +110,37 @@
 		-p. The fraction of nodes placed in each bin. Range of p is [0,1]. p=0.5 is a good choice.
 		-s. Feature similarity threshold. Start at zero and increase by 1 each iteration.
 		
-**Entity disambiguation with textual and connection information**
-	-Similar to Belief Propagation (or maybe the same?)		
+**Thread and Fraud Intelligence, Las Vegas Style**
+	-Naive identity matching
+		-Merge/purge and match/merge
+			-The merge techniques came out of direct mail to eliminate duplicates in mailing lists
+			-The article does not discuss the techniques or cite references for more information
+		-Binary matching engines
+			-Take an identity in one data set and test for its presence in another data set
+			-Output is usually a probability with a confidence level
+			-Used to find people on a watch list
+		-Centralized identity catalogs
+			-Collect data from many sources and assemble it into a canonical set of identities
+		-Probabilistic
+			-Probabilistic techniques need a training set.
+			-Probabilistic techniques generate  distribution and frequency data.
+			-E.g. "Dave" is a common name but "Arn" is not. That information is used to generate confidence information.
+			-E.g. residents of California are common, but residents of Alaska are not.
+		-Deterministic
+			-Business rules created by experts.
+			-E.g. "Robert" == "Bob"
+			-Deterministic is essential because it eliminates dependence on training sets.
+		-Generic values
+			-Common values that do not help resolve identity.
+			-For example, a travel agent's phone number does not resolve to the traveller.
+			-Dummy values like SSN 111-11-1111.
+			-Impossible to know all generic values in advance
+			-Use statistical methods to learn generic values
+		-IBM's Identity Resolution and Relationship Resolution
+			-Basic algorithm:
+				-IF two names are similar AND there is a matching unique identifier THEN match UNLESS the unique identifier is generic.
+				-Unique identifiers include SSN, date-of-birth, passport number, credit card numbers, driver's licence number
+				-Phone numbers and date-of-birth are NOT considered unique identifiers
+		
 		
 		
