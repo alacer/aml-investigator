@@ -1,0 +1,39 @@
+Politically Exposed Persons (PEP)
+	-PEP Score
+	 -Determine if an entity has a PEP score, and if so, what is the PEP score
+		-Let pep_score = 0
+		-Let word_list = {judge, minister, official, representative, legislator, magistrate}
+		-For every relation in every document
+			-If subject = entity_of_interest AND object is in the set of word_list
+				-then pep_score = pep_score + 5
+		-Add to the PEP score based on country and occupation.
+	
+	-Propagating PEP Score
+	-People closely connected to a PEP should also have a high PEP score.
+	-Simplest thing that might work
+		-Collect all the nodes that have zero PEP score.
+		-Set their PEP score to be the average of the PEP score of all nodes to which they are directly connected, if the node has a PEP score > 0. 
+		-If the PEP score are updated as the algorithm runs, entities can get different PEP score depending on the order in which nodes are evaluated. To avoid this, store the averages and update all the nodes after calculating their values.
+	-Something more sophisticated
+		-Use some kind of propagation algorithm like belief propagation.
+
+Disambiguation/resolution #1
+	-Create feature vectors for every entity using attributes like name, phone number, city, and so on.
+	-Where two feature vectors are missing one or both features, use some estimate technique to fill in the missing values based on distribution features where we do have data.
+	-For every pair of features, compute the edit distance between each feature.
+	-Calculate the magnitude of each vector, where larger magnitude means more dissimilar.
+	-Assemble something like a covariance matrix:
+		a b c d
+	  a 0 4 4 5
+	  b   0 1 1
+	  c     0 2
+	  d       0
+	  
+	-Then treat the matrix as a graph.
+	-Use Djisktra's algorithm to to compute the distance from one node to any other node. 
+	-Set some threshold distance below which two nodes are considered to represent the same entity.
+	-NOTE: After a little thinking I determined eigen techniques like PCA would be useless on this matrix because we do not know that all the features vectors refer to the same entity. Clustering the feature vectors in higher dimensional space is the way to go. 
+	
+Disambiguation/resolution #2
+	-Treat each feature in the feature vector as a string and location sensitive hashing to transform each vector.
+	-Cluster the new vectors. Each cluster should represent the same entity.
